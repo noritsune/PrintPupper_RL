@@ -160,7 +160,7 @@ python scripts/export_onnx.py --ckpt <ckpt> --out pupper_policy.onnx         # O
 
 実機側のコードは PrintPupper の [feat/rl-policy-walk](https://github.com/noritsune/PrintPupper/tree/feat/rl-policy-walk) ブランチの `src/rl/` にあります。**実機で動かせるのはこのブランチだけです。** PrintPupper の main ブランチには、方策で歩くためのコードが入っていません。
 
-1. Windows で PrintPupper の `feat/rl-policy-walk` ブランチをチェックアウトし、`.\sync_to_robot.ps1 -PullPolicy` を実行します。WSL の `deploy/policy_u_stand.npz` が `src/rl/` にコピーされ、ロボットに転送されます
+1. PrintPupper の `feat/rl-policy-walk` ブランチをチェックアウトし、ロボットに転送します。Windows では `.\sync_to_robot.ps1 -RobotHost pi@<ロボットの IP>` で転送できます。ブランチには最新の方策 `src/rl/policy_u_stand.npz` が入っています。自分で学習し直した方策を使うときは `-PullPolicy` を付けると、WSL の `deploy/policy_u_stand.npz` を `src/rl/` にコピーしてから転送します（コピー元は `-PolicySource` で変えられます）
 2. ロボット上で `robot.service` を起動します
 3. ゲームパッドのボタン 12 で方策歩行（青 LED が点灯）、ボタン 11 でルールベース歩行に切り替えます。L1 で開始と停止です
 
