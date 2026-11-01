@@ -6,8 +6,7 @@ scripts/policy.py の NumpyPolicy と同じ計算を、.npz (jax/brax 非依存)
 
   1. 隠れ層の活性化は **silu (swish)**。brax の make_ppo_networks の既定値で
      あって tanh ではない。ここを tanh にすると方策がまるごと別物になる
-     (実測: 同じ観測に対し行動が最大 1.4 ずれる)。リポジトリ直下の
-     pupper_policy.onnx はこのバグを踏んだままなので使わないこと。
+     (実測: 同じ観測に対し行動が最大 1.4 ずれる)。
   2. 出力層は 2*12 = 24 次元 (平均 12 + log std 12)。決定的に動かすときは
      NormalTanhDistribution.mode() = tanh(平均) なので、先頭 12 に tanh を
      掛ける。ここは tanh で正しい。
