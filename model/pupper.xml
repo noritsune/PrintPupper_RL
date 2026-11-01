@@ -1,0 +1,170 @@
+<mujoco model="printpupper">
+  <compiler angle="radian" meshdir="meshes/" autolimits="true"/>
+  <option timestep="0.004" iterations="4" ls_iterations="8" integrator="implicitfast">
+    <flag eulerdamp="disable"/>
+  </option>
+  <custom><numeric data="5" name="max_contact_points"/><numeric data="4" name="max_geom_pairs"/></custom>
+
+  <default>
+    <default class="pupper">
+      <joint type="hinge" armature="0.011" damping="0.42857142857142855" frictionloss="0.01" limited="true"/>
+      <position kp="50.0" kv="1.0547" forcerange="-3.0 3.0"/>
+      <default class="visual">
+        <geom type="mesh" contype="0" conaffinity="0" group="2" density="0" material="part"/>
+      </default>
+      <default class="collision">
+        <geom contype="0" conaffinity="1" group="3" condim="3" friction="0.8 0.02 0.01" solref="0.015 1" solimp="0.9 0.95 0.001"/>
+      </default>
+    </default>
+  </default>
+
+  <visual>
+    <global offwidth="1920" offheight="1080" azimuth="135" elevation="-20"/>
+    <quality shadowsize="4096"/>
+  </visual>
+
+  <asset>
+    <material name="part" rgba="0.75 0.75 0.78 1"/>
+    <material name="grid" texture="grid" texrepeat="8 8" texuniform="true" reflectance="0.1"/>
+    <texture name="grid" type="2d" builtin="checker" width="512" height="512" rgb1="0.2 0.25 0.3" rgb2="0.28 0.33 0.38"/>
+    <texture name="sky" type="skybox" builtin="gradient" rgb1="0.35 0.45 0.6" rgb2="0.05 0.06 0.1" width="256" height="256"/>
+    <mesh name="pp_vm_body" file="pp_vm_body.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="pp_vm_hip_BL" file="pp_vm_hip_BL.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="pp_vm_hip_BR" file="pp_vm_hip_BR.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="pp_vm_hip_FL" file="pp_vm_hip_FL.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="pp_vm_hip_FR" file="pp_vm_hip_FR.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="pp_vm_lowerleg_LR" file="pp_vm_lowerleg_LR.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="pp_vm_upperleg_L" file="pp_vm_upperleg_L.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="pp_vm_upperleg_R" file="pp_vm_upperleg_R.stl" scale="0.001 0.001 0.001"/>
+  </asset>
+
+  <worldbody>
+    <light name="spot" pos="0 0 2.5" dir="0 0 -1" directional="true"/>
+    <geom name="floor" type="plane" size="0 0 0.05" material="grid" contype="1" conaffinity="0" condim="3" friction="0.8 0.02 0.01"/>
+    <body name="base_link" pos="0 0 0.1746" childclass="pupper">
+      <freejoint name="root"/>
+      <camera name="track" pos="0.6 -1.0 0.4" xyaxes="1 0.6 0 -0.2 0.35 0.9" mode="trackcom"/>
+      <inertial pos="0.009535 0.000000 0.018697" mass="0.6450" fullinertia="1.089e-03 1.907e-03 2.442e-03 -1.764e-20 -5.254e-06 6.546e-20"/>
+      <geom class="visual" mesh="pp_vm_body"/>
+      <geom name="trunk_col" class="collision" type="box" size="0.1425 0.0645 0.036" pos="0.0075 0 0.021"/>
+      <site name="imu" pos="0 0 0" size="0.008"/>
+
+      <body name="lf_hip_link" pos="0.100 0.045 0">
+        <joint name="lf_hip_joint" axis="1 0 0" range="-1.5708 1.5708"/>
+        <inertial pos="0.004652 0.003690 -0.010588" mass="0.1500" fullinertia="5.304e-05 8.898e-05 7.004e-05 -6.352e-06 -5.914e-07 -1.099e-06"/>
+        <geom class="visual" mesh="pp_vm_hip_FL"/>
+        <body name="lf_upper_leg_link" pos="0 0.045 0">
+          <joint name="lf_upper_leg_joint" axis="0 1 0" range="-0.7854 2.3562"/>
+          <inertial pos="0.000000 -0.010819 -0.047894" mass="0.0320" fullinertia="4.194e-05 4.275e-05 1.368e-06 -4.279e-23 -3.969e-22 3.595e-07"/>
+          <geom class="visual" mesh="pp_vm_upperleg_L"/>
+          <body name="lf_lower_leg_link" pos="0 0 -0.11">
+            <joint name="lf_lower_leg_joint" axis="0 1 0" range="-2.9671 -0.5934"/>
+            <inertial pos="-0.000435 -0.000000 -0.069559" mass="0.0260" fullinertia="3.445e-05 3.560e-05 1.500e-06 -9.346e-24 -5.603e-07 7.411e-22"/>
+            <geom class="visual" mesh="pp_vm_lowerleg_LR"/>
+            <geom name="lf_foot_col" class="collision" type="sphere" size="0.012" pos="0 0 -0.12"/>
+            <site name="lf_foot" pos="0 0 -0.12" size="0.006" rgba="1 0.4 0.2 1"/>
+          </body>
+        </body>
+      </body>
+
+      <body name="rf_hip_link" pos="0.100 -0.045 0">
+        <joint name="rf_hip_joint" axis="1 0 0" range="-1.5708 1.5708"/>
+        <inertial pos="0.004652 -0.003690 -0.010588" mass="0.1500" fullinertia="5.304e-05 8.898e-05 7.004e-05 6.352e-06 -5.914e-07 1.099e-06"/>
+        <geom class="visual" mesh="pp_vm_hip_FR"/>
+        <body name="rf_upper_leg_link" pos="0 -0.045 0">
+          <joint name="rf_upper_leg_joint" axis="0 1 0" range="-0.7854 2.3562"/>
+          <inertial pos="0.000000 0.010819 -0.047894" mass="0.0320" fullinertia="4.194e-05 4.275e-05 1.368e-06 -1.145e-22 -5.454e-22 -3.595e-07"/>
+          <geom class="visual" mesh="pp_vm_upperleg_R"/>
+          <body name="rf_lower_leg_link" pos="0 0 -0.11">
+            <joint name="rf_lower_leg_joint" axis="0 1 0" range="-2.9671 -0.5934"/>
+            <inertial pos="-0.000435 -0.000000 -0.069559" mass="0.0260" fullinertia="3.445e-05 3.560e-05 1.500e-06 -9.346e-24 -5.603e-07 7.411e-22"/>
+            <geom class="visual" mesh="pp_vm_lowerleg_LR"/>
+            <geom name="rf_foot_col" class="collision" type="sphere" size="0.012" pos="0 0 -0.12"/>
+            <site name="rf_foot" pos="0 0 -0.12" size="0.006" rgba="1 0.4 0.2 1"/>
+          </body>
+        </body>
+      </body>
+
+      <body name="lh_hip_link" pos="-0.100 0.045 0">
+        <joint name="lh_hip_joint" axis="1 0 0" range="-1.5708 1.5708"/>
+        <inertial pos="0.009299 0.003680 -0.010210" mass="0.1500" fullinertia="5.244e-05 9.638e-05 7.732e-05 5.771e-06 -7.778e-06 -9.949e-07"/>
+        <geom class="visual" mesh="pp_vm_hip_BL"/>
+        <body name="lh_upper_leg_link" pos="0 0.045 0">
+          <joint name="lh_upper_leg_joint" axis="0 1 0" range="-0.7854 2.3562"/>
+          <inertial pos="0.000000 -0.010819 -0.047894" mass="0.0320" fullinertia="4.194e-05 4.275e-05 1.368e-06 -4.279e-23 -3.969e-22 3.595e-07"/>
+          <geom class="visual" mesh="pp_vm_upperleg_L"/>
+          <body name="lh_lower_leg_link" pos="0 0 -0.11">
+            <joint name="lh_lower_leg_joint" axis="0 1 0" range="-2.9671 -0.5934"/>
+            <inertial pos="-0.000435 -0.000000 -0.069559" mass="0.0260" fullinertia="3.445e-05 3.560e-05 1.500e-06 -9.346e-24 -5.603e-07 7.411e-22"/>
+            <geom class="visual" mesh="pp_vm_lowerleg_LR"/>
+            <geom name="lh_foot_col" class="collision" type="sphere" size="0.012" pos="0 0 -0.12"/>
+            <site name="lh_foot" pos="0 0 -0.12" size="0.006" rgba="1 0.4 0.2 1"/>
+          </body>
+        </body>
+      </body>
+
+      <body name="rh_hip_link" pos="-0.100 -0.045 0">
+        <joint name="rh_hip_joint" axis="1 0 0" range="-1.5708 1.5708"/>
+        <inertial pos="0.009299 -0.003680 -0.010210" mass="0.1500" fullinertia="5.244e-05 9.638e-05 7.732e-05 -5.771e-06 -7.778e-06 9.949e-07"/>
+        <geom class="visual" mesh="pp_vm_hip_BR"/>
+        <body name="rh_upper_leg_link" pos="0 -0.045 0">
+          <joint name="rh_upper_leg_joint" axis="0 1 0" range="-0.7854 2.3562"/>
+          <inertial pos="0.000000 0.010819 -0.047894" mass="0.0320" fullinertia="4.194e-05 4.275e-05 1.368e-06 -1.145e-22 -5.454e-22 -3.595e-07"/>
+          <geom class="visual" mesh="pp_vm_upperleg_R"/>
+          <body name="rh_lower_leg_link" pos="0 0 -0.11">
+            <joint name="rh_lower_leg_joint" axis="0 1 0" range="-2.9671 -0.5934"/>
+            <inertial pos="-0.000435 -0.000000 -0.069559" mass="0.0260" fullinertia="3.445e-05 3.560e-05 1.500e-06 -9.346e-24 -5.603e-07 7.411e-22"/>
+            <geom class="visual" mesh="pp_vm_lowerleg_LR"/>
+            <geom name="rh_foot_col" class="collision" type="sphere" size="0.012" pos="0 0 -0.12"/>
+            <site name="rh_foot" pos="0 0 -0.12" size="0.006" rgba="1 0.4 0.2 1"/>
+          </body>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+
+  <actuator>
+    <position class="pupper" name="lf_hip_joint" joint="lf_hip_joint" ctrlrange="-1.5708 1.5708"/>
+    <position class="pupper" name="lf_upper_leg_joint" joint="lf_upper_leg_joint" ctrlrange="-0.7854 2.3562"/>
+    <position class="pupper" name="lf_lower_leg_joint" joint="lf_lower_leg_joint" ctrlrange="-2.9671 -0.5934"/>
+    <position class="pupper" name="rf_hip_joint" joint="rf_hip_joint" ctrlrange="-1.5708 1.5708"/>
+    <position class="pupper" name="rf_upper_leg_joint" joint="rf_upper_leg_joint" ctrlrange="-0.7854 2.3562"/>
+    <position class="pupper" name="rf_lower_leg_joint" joint="rf_lower_leg_joint" ctrlrange="-2.9671 -0.5934"/>
+    <position class="pupper" name="lh_hip_joint" joint="lh_hip_joint" ctrlrange="-1.5708 1.5708"/>
+    <position class="pupper" name="lh_upper_leg_joint" joint="lh_upper_leg_joint" ctrlrange="-0.7854 2.3562"/>
+    <position class="pupper" name="lh_lower_leg_joint" joint="lh_lower_leg_joint" ctrlrange="-2.9671 -0.5934"/>
+    <position class="pupper" name="rh_hip_joint" joint="rh_hip_joint" ctrlrange="-1.5708 1.5708"/>
+    <position class="pupper" name="rh_upper_leg_joint" joint="rh_upper_leg_joint" ctrlrange="-0.7854 2.3562"/>
+    <position class="pupper" name="rh_lower_leg_joint" joint="rh_lower_leg_joint" ctrlrange="-2.9671 -0.5934"/>
+  </actuator>
+
+  <sensor>
+    <!-- 実機 IMU で取得できる量 (MPU6050 等の追加が前提) -->
+    <gyro name="gyro" site="imu"/>
+    <accelerometer name="accelerometer" site="imu"/>
+    <framezaxis name="upvector" objtype="site" objname="imu"/>
+    <framequat name="orientation" objtype="site" objname="imu"/>
+    <!-- 実機では取得できない特権情報 (critic 用 / 報酬用) -->
+    <framelinvel name="global_linvel" objtype="site" objname="imu"/>
+    <frameangvel name="global_angvel" objtype="site" objname="imu"/>
+    <velocimeter name="local_linvel" site="imu"/>
+    <framepos name="lf_pos" objtype="site" objname="lf_foot"/>
+    <framelinvel name="lf_linvel" objtype="site" objname="lf_foot"/>
+    <framepos name="rf_pos" objtype="site" objname="rf_foot"/>
+    <framelinvel name="rf_linvel" objtype="site" objname="rf_foot"/>
+    <framepos name="lh_pos" objtype="site" objname="lh_foot"/>
+    <framelinvel name="lh_linvel" objtype="site" objname="lh_foot"/>
+    <framepos name="rh_pos" objtype="site" objname="rh_foot"/>
+    <framelinvel name="rh_linvel" objtype="site" objname="rh_foot"/>
+    <!-- 接触センサ: MJX で接触配列を走査せず済む -->
+    <contact name="lf_floor_found" geom1="lf_foot_col" geom2="floor" reduce="mindist" num="1" data="found"/>
+    <contact name="rf_floor_found" geom1="rf_foot_col" geom2="floor" reduce="mindist" num="1" data="found"/>
+    <contact name="lh_floor_found" geom1="lh_foot_col" geom2="floor" reduce="mindist" num="1" data="found"/>
+    <contact name="rh_floor_found" geom1="rh_foot_col" geom2="floor" reduce="mindist" num="1" data="found"/>
+    <contact name="trunk_floor_found" geom1="trunk_col" geom2="floor" reduce="mindist" num="1" data="found"/>
+  </sensor>
+
+  <keyframe>
+    <key name="stand" qpos="0 0 0.1746 1 0 0 0 0.0000 0.7854 -1.5708 0.0000 0.7854 -1.5708 0.0000 0.7854 -1.5708 0.0000 0.7854 -1.5708" ctrl="0.0000 0.7854 -1.5708 0.0000 0.7854 -1.5708 0.0000 0.7854 -1.5708 0.0000 0.7854 -1.5708"/>
+  </keyframe>
+</mujoco>

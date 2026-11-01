@@ -1,0 +1,6 @@
+.venv/
+out/
+PrintPupper_ROS/
+__pycache__/
+*.pyc
+MUJOCO_LOG.TXT
